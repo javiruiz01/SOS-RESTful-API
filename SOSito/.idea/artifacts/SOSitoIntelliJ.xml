@@ -1,0 +1,6 @@
+<component name="ArtifactManager">
+  <artifact type="war" name="SOSitoIntelliJ">
+    <output-path>$PROJECT_DIR$/out/artifacts/SOSitoIntelliJ</output-path>
+    <root id="archive" name="SOSitoIntelliJ.war" />
+  </artifact>
+</component>
