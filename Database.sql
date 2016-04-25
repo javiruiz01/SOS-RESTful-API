@@ -12,7 +12,7 @@ CREATE TABLE IF NOT EXISTS USER  (
 CREATE TABLE IF NOT EXISTS POST (
   idPost INT primary key AUTO_INCREMENT,
   postBody TEXT,
-  fechaCreation DATE,
+  creationDate DATE,
   user INT,
   FOREIGN KEY (user) REFERENCES USER(idUser) ON UPDATE CASCADE
 )engine = InnoDB;
@@ -28,5 +28,5 @@ CREATE TABLE IF NOT EXISTS ISFRIEND (
 INSERT INTO USER (idUser, username, postNumber, name, lastname, gender, mail, phone)
 VALUES	('1', 'jruiz', '50', 'Javier', 'Ruiz', 'male', 'mail', '0212'),('2', 'yzamorano', '50', 'Yerai', 'Zamorano', 'male', 'mail', '0414');
 
-INSERT INTO POST (idPost, postBody, fechaCreation, user) VALUES ('1', 'This is my first post', '2016-04-23', '1');
-INSERT INTO POST (idPost, postBody, fechaCreation, user) VALUES ('2', 'This is my second post', '2016-04-24', '2');
+INSERT INTO POST (idPost, postBody, creationDate, user) VALUES ('1', 'This is my first post', '2016-04-23', '1');
+INSERT INTO POST (idPost, postBody, creationDate, user) VALUES ('2', 'This is my second post', '2016-04-24', '2');
