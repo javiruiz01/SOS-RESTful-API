@@ -14,6 +14,7 @@ import javax.ws.rs.core.Response.Status;
 import javax.xml.bind.JAXBElement;
 import javax.ws.rs.PathParam;
 import java.sql.*;
+import java.util.Date;
 
 @Path ("/api/v1")
 public class API {
@@ -216,12 +217,98 @@ public class API {
 		}
 		return Response.status(Response.Status.BAD_REQUEST).build();
 	}
-	
+
 	public static Response postDeleteUser (Connection connection, Integer idUser) {
-		Response result = null;
-		return result;
+		Statement sentence = null;
+		String query = "DELETE FROM USER\n"
+				+ "WHERE idUser='" + idUser + "';";
+		try {
+			sentence = connection.createStatement();
+			int rs = sentence.executeUpdate(query);
+			if (rs != 0) {
+				return Response.status(Response.Status.OK).build();
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return Response.status(Response.Status.BAD_REQUEST).build();
 	}
 
+	public static Response postAddPost (Connection connection, Integer idPost, String postBody, String creationDate, Integer user) {
+		Statement sentence = null;
+		String query = "INSERT INTO POST\n"
+				+ "(idPost, postBody, creationDate, user)\n"
+				+ "VALUES\n"
+				+ "('" + idPost + "', '" + postBody + "', '" + creationDate + "', '" + user + "');";
+
+		try {
+			sentence = connection.createStatement();
+			int rs = sentence.executeUpdate(query);
+			if (rs != 0) {
+				return Response.status(Response.Status.CREATED).build();
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return Response.status(Response.Status.BAD_REQUEST).build();
+	}
+
+	public static Response postDeletePost(Integer idPost) {
+		Statement sentence = null;
+		String query = "DELETE FROM POST\n"
+				+ "WHERE idPost = " + idPost + ";";
+		try {
+			sentence = connection.createStatement();
+			int rs = sentence.executeUpdate(query);
+			if (rs!=0) {
+				return Response.status(Response.Status.OK).build();
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return Response.status(Response.Status.BAD_REQUEST).build();
+	}
+
+	public static Response postAddFriend(Integer idUser, Integer idUserFriend) {
+		System.out.println(idUserFriend);
+		Statement sentence1 = null;
+		Statement sentence2 = null;
+		Boolean allIsGood = false;
+		String query1 = "INSERT INTO ISFRIEND\n"
+				+ "(user1, user2)\n"
+				+ "VALUES\n"
+				+ "('" + idUser + "', '" + idUserFriend + "');\n";
+		try {
+			sentence1 = connection.createStatement();
+			int rs = sentence1.executeUpdate(query1);
+			if (rs != 0) {
+				allIsGood = true;
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		try {
+			sentence1.close();
+		} catch (SQLException e) {
+			
+			e.printStackTrace();
+		}
+		String query2 = "INSERT INTO ISFRIEND\n"
+				+ "(user1, user2)\n"
+				+ "VALUES\n"
+				+ "('" + idUserFriend + "', '" + idUser + "');\n";
+		try {
+			sentence2 = connection.createStatement();
+			int rs = sentence2.executeUpdate(query2);
+			if (rs != 0 && allIsGood) {
+				return Response.status(Response.Status.CREATED).build();
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return Response.status(Response.Status.BAD_REQUEST).build();
+	}
+	
 	@GET
 	@Path("/users")
 	@Produces(MediaType.TEXT_XML)
@@ -340,12 +427,12 @@ public class API {
 		result = postCreateUser(connection, idUser, username, postNumber, name, lastname, gender, mail, phone);
 		return result;
 	}
-	
+
 	@POST
-	@Path("/user/delete/{idUser}")
-	@Produces(MediaType.TEXT_XML)
-	@Consumes(MediaType.TEXT_XML)
-	public static Response deleteUser (JAXBUserModel user, @PathParam("idUser") Integer idUser) {
+	@Path("/user/{idUser}/delete")
+	public static Response deleteUser (JAXBUserModel user, @PathParam("idUser") Integer idUser) { 
+		// Este seguro que es un POST?
+		// Debería ser un DELETE
 		Response result = null;
 		getConnection();
 		try {		
@@ -356,7 +443,67 @@ public class API {
 			e.printStackTrace();
 		}
 		result = postDeleteUser(connection, idUser);
-		
+		if (result.getStatus() != 200) {
+			result = Response.status(Response.Status.BAD_REQUEST).build();
+		}
+		return result;
+	}
+
+	@POST
+	@Path("/posts/add")
+	@Produces(MediaType.TEXT_XML)
+	@Consumes(MediaType.TEXT_XML)
+	public static Response addPost (JAXBPostModel post) {
+		Response result = null;
+		getConnection();
+		try {		
+			if (connection.isClosed() == true) {
+				return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		Integer idPost = post.getIdPost();
+		String postBody = post.getPostBody();
+		String creationDate = post.getCreationDate();
+		Integer user = post.getUser();
+		result = postAddPost (connection, idPost, postBody, creationDate, user);
+		return result;
+	}
+
+	@POST
+	@Path("/posts/{idPost}/delete")
+	@Produces(MediaType.TEXT_XML)
+	public static Response deletePost (@PathParam("idPost") Integer idPost) {
+		Response result = null;
+		getConnection();
+		try {		
+			if (connection.isClosed() == true) {
+				return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		result = postDeletePost(idPost);
+		return result;
+	}
+
+	@POST
+	@Path("/users/{idUser}/friends/add")
+	@Produces(MediaType.TEXT_XML)
+	@Consumes(MediaType.TEXT_XML)
+	public static Response addFriend(@PathParam("idUser") Integer idUser, JAXBFriendModel friend) {
+		Response result = null;
+		getConnection();
+		try {		
+			if (connection.isClosed() == true) {
+				return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		Integer idUserFriend = friend.getIdFriend();
+		result = postAddFriend(idUser, idUserFriend);
 		return result;
 	}
 }
