@@ -1,10 +1,17 @@
 package rest1;
 
+import javax.ws.rs.Consumes;
+import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
+import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.Status;
+import javax.xml.bind.JAXBElement;
 import javax.ws.rs.PathParam;
 import java.sql.*;
 
@@ -36,7 +43,7 @@ public class API {
 		}
 	}
 
-	public static String getUsers (Connection conn) {
+	public static Response getUsers (Connection conn) {
 		Statement sentence = null;
 		String query =	"SELECT * FROM USER";
 		String result = "<?xml version=\"1.0\"?>\n<Users>\n";
@@ -69,10 +76,10 @@ public class API {
 			e.printStackTrace();
 		}
 		result += "</Users>";
-		return result;
+		return Response.status(Response.Status.OK).entity(result).build();
 	}
 
-	public static String getPosts(Connection conn, Integer idUser, Integer limit, Integer offset, Date sdate, Date edate) {
+	public static Response getPosts(Connection conn, Integer idUser, Integer limit, Integer offset, Date sdate, Date edate) {
 		PreparedStatement sentence = null;
 		String result = "<?xml version=\"1.0\"?>\n<Posts>\n";
 		String query = "SELECT * \n" 
@@ -111,10 +118,10 @@ public class API {
 			e.printStackTrace();
 		}
 		result += "</Posts>";
-		return result;
+		return Response.status(Response.Status.OK).entity(result).build();
 	}
 
-	public static String getFriends (Connection conn, Integer idUser, Integer limit, Integer offset) {
+	public static Response getFriends (Connection conn, Integer idUser, Integer limit, Integer offset) {
 		PreparedStatement sentence = null;
 		PreparedStatement sentenceFriend = null;
 		String result = "<?xml version=\"1.0\"?>\n<Friends>\n";
@@ -158,10 +165,10 @@ public class API {
 			e.printStackTrace();
 		}
 		result += "</Friends>";
-		return result;
+		return Response.status(Response.Status.OK).entity(result).build();
 	}
 
-	public static String getFindUser (Connection connection, String name) {
+	public static Response getFindUser (Connection connection, String name) {
 		String result = "<?xml version=\"1.0\"?>\n<Users>\n";
 		PreparedStatement sentence = null;
 		String query = "SELECT * \n"
@@ -186,52 +193,118 @@ public class API {
 			e.printStackTrace();
 		}
 		result += "</Users>";
+		return Response.status(Response.Status.OK).entity(result).build();
+	}
+
+	public static Response postCreateUser (Connection connection, Integer idUser, String username, Integer postNumber, String name,
+			String lastname, String gender, String mail, String phone) {
+		Statement sentence = null;
+		String query = "INSERT INTO USER\n"
+				+ "(idUser, username, postNumber, name, lastname, gender, mail, phone)\n"
+				+ "VALUES\n"
+				+ "('" + idUser + "', '" + username + "', '" + postNumber  
+				+ "', '" + name + "', '" + lastname + "', '" + gender  
+				+ "', '" + mail + "', '" + phone + "');"  ;		
+		try {
+			sentence = connection.createStatement();
+			int rs = sentence.executeUpdate(query);
+			if (rs != 0) {
+				return Response.status(Response.Status.CREATED).build();
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return Response.status(Response.Status.BAD_REQUEST).build();
+	}
+	
+	public static Response postDeleteUser (Connection connection, Integer idUser) {
+		Response result = null;
 		return result;
 	}
 
 	@GET
 	@Path("/users")
 	@Produces(MediaType.TEXT_XML)
-	public static String test() {
-		String users;
+	public static Response test() {
+		Response users;
 		getConnection();
+		try {		
+			if (connection.isClosed() == true) {
+				return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
 		users = getUsers(connection);
+		if (users.getStatus() != 200) {
+			users = Response.status(Response.Status.BAD_REQUEST).build();
+		}
 		return users;
 	}
 
 	@GET
 	@Path("/users/{idUser}/posts")
 	@Produces(MediaType.TEXT_XML)
-	public static String posts(@PathParam("idUser") Integer idUser,
+	public static Response posts(@PathParam("idUser") Integer idUser,
 			@QueryParam("limit") Integer limit,
 			@QueryParam("offset") Integer offset,
 			@QueryParam("sdate") Date sdate,
 			@QueryParam("edate") Date edate) {
-		String result;
+		Response result;
 		getConnection();
+		try {		
+			if (connection.isClosed() == true) {
+				return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
 		result = getPosts(connection, idUser, limit, offset, sdate, edate);
+		if (result.getStatus() != 200) {
+			result = Response.status(Response.Status.BAD_REQUEST).build();
+		}
 		return result;
 	}
 
 	@GET
 	@Path("/users/{idUser}/friends")
 	@Produces(MediaType.TEXT_XML)
-	public static String friends (@PathParam("idUser") Integer idUser,
+	public static Response friends (@PathParam("idUser") Integer idUser,
 			@QueryParam("limit") Integer limit,
 			@QueryParam("offset") Integer offset) {
-		String result;
+		Response result;
 		getConnection();
+		try {		
+			if (connection.isClosed() == true) {
+				return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
 		result = getFriends(connection, idUser, limit, offset);
+		if (result.getStatus() != 200) {
+			result = Response.status(Response.Status.BAD_REQUEST).build();
+		}
 		return result;
 	}
 
 	@GET
 	@Path("/users/{name}")
 	@Produces(MediaType.TEXT_XML)
-	public static String findUser (@PathParam("name") String name) {
-		String result;
+	public static Response findUser (@PathParam("name") String name) {
+		Response result;
 		getConnection();
+		try {		
+			if (connection.isClosed() == true) {
+				return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
 		result = getFindUser(connection, name);
+		if (result.getStatus() != 200) {
+			result = Response.status(Response.Status.BAD_REQUEST).build();
+		}
 		return result;
 	}
 
@@ -240,5 +313,50 @@ public class API {
 	@Produces(MediaType.TEXT_PLAIN)
 	public static String hello () {
 		return "hello";
+	}
+
+	@POST
+	@Path("/user/add")
+	@Produces(MediaType.TEXT_XML)
+	@Consumes(MediaType.TEXT_XML)
+	public static Response createUser (JAXBUserModel user) {
+		Response result;
+		getConnection();
+		try {		
+			if (connection.isClosed() == true) {
+				return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		Integer idUser = user.getIdUser();
+		String username = user.getUsername();
+		Integer postNumber = user.getPostNumber();
+		String name = user.getName();
+		String lastname = user.getLastname();
+		String gender = user.getGender();
+		String mail = user.getMail();
+		String phone = user.getPhone();
+		result = postCreateUser(connection, idUser, username, postNumber, name, lastname, gender, mail, phone);
+		return result;
+	}
+	
+	@POST
+	@Path("/user/delete/{idUser}")
+	@Produces(MediaType.TEXT_XML)
+	@Consumes(MediaType.TEXT_XML)
+	public static Response deleteUser (JAXBUserModel user, @PathParam("idUser") Integer idUser) {
+		Response result = null;
+		getConnection();
+		try {		
+			if (connection.isClosed() == true) {
+				return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		result = postDeleteUser(connection, idUser);
+		
+		return result;
 	}
 }
