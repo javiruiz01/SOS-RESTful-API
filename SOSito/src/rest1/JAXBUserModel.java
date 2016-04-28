@@ -8,7 +8,6 @@ public class JAXBUserModel {
 
 	private Integer idUser;
 	private String username;
-	private Integer postNumber;
 	private String name;
 	private String lastname;
 	private String gender;
@@ -23,11 +22,6 @@ public class JAXBUserModel {
 	@XmlElement(name="username")
 	public String getUsername () {
 		return 	username;
-	}
-
-	@XmlElement(name="postNumber")
-	public Integer getPostNumber () {
-		return 	postNumber;
 	}
 
 	@XmlElement(name="name")
@@ -61,10 +55,6 @@ public class JAXBUserModel {
 
 	public void setUsername (String username){
 		this.username = username;
-	}
-
-	public void setPostNumber(Integer postNumber) {
-		this.postNumber = postNumber;
 	}
 
 	public void setName (String name) {

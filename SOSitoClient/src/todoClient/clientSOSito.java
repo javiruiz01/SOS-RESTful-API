@@ -9,7 +9,6 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriBuilder;
 import org.glassfish.jersey.client.ClientConfig;
-import java.util.Date;
 
 import rest1.JAXBUserModel;
 import rest1.JAXBPostModel;
@@ -28,7 +27,6 @@ public class clientSOSito {
 		JAXBUserModel user = new JAXBUserModel();
 		user.setIdUser(8);
 		user.setUsername(null);
-		user.setPostNumber(30);
 		user.setName(null);
 		user.setLastname("Ruiz");
 		user.setGender(null);
@@ -51,7 +49,27 @@ public class clientSOSito {
 		
 		JAXBFriendModel friend = new JAXBFriendModel();
 		friend.setIdFriend(4);
-		System.out.println(target.path("users").path("3").path("friends").path("add").request().post(Entity.entity(friend, MediaType.TEXT_XML)));
+		// System.out.println(target.path("users").path("3").path("friends").path("add").request().post(Entity.entity(friend, MediaType.TEXT_XML)));
+		
+		JAXBUserModel userModify = new JAXBUserModel();
+		userModify.setUsername("jruiz");
+		userModify.setMail("jarc0212@gmail.com");
+		userModify.setPhone("608911616");
+		// System.out.println(target.path("users").path("1").request().post(Entity.entity(userModify, MediaType.TEXT_XML)));
+		
+		JAXBPostModel post = new JAXBPostModel();
+		post.setPostBody("Hi there");
+		// System.out.println(target.path("posts").path("10").request().put(Entity.entity(post, MediaType.TEXT_XML)));
+		
+		JAXBFriendModel deleteFriend = new JAXBFriendModel();
+		deleteFriend.setIdFriend(2);
+		// System.out.println(target.path("users").path("1").path("friends").path("delete").request().post(Entity.entity(deleteFriend, MediaType.TEXT_XML)));
+		
+		JAXBPostModel postFriend = new JAXBPostModel();
+		postFriend.setPostBody("Holita que tal");
+		System.out.println(target.path("users").path("1").path("friends").path("posts").request().get());
+		
+		
 	}
 
 	private static URI getBaseURI() {
