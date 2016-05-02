@@ -1,16 +1,20 @@
 package rest1;
 
+import javax.ws.rs.core.GenericEntity;
 import javax.ws.rs.core.Response;
 import java.sql.*;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
+import java.util.List;
 
 public class DatabaseQuery {
-	
+
 	public static Response getUsers (Connection connection) {
 		Statement sentence = null;
 		String query =	"SELECT * FROM USER";
 		String result = "<?xml version=\"1.0\"?>\n<Users>\n";
-
+		List<JAXBUserModel> listUser = new ArrayList<JAXBUserModel> ();
 		try {
 			sentence = connection.createStatement();
 			ResultSet rs = sentence.executeQuery(query);
@@ -80,7 +84,7 @@ public class DatabaseQuery {
 		result += "</Posts>";
 		return Response.status(Response.Status.OK).entity(result).build();
 	}
-	
+
 	public static Response getPostNumber (Connection connection, Integer idUser, String sdate, String edate) {
 		String number = "<?xml version=\"1.0\"?>\n<POSTS>\n";
 		Statement sentence = null;
@@ -109,7 +113,7 @@ public class DatabaseQuery {
 		number += "</POSTS>";
 		return Response.status(Response.Status.OK).entity(number).build();
 	}
-	
+
 	public static Response getFriends (Connection connection, Integer idUser, Integer limit, Integer offset) {
 		PreparedStatement sentence = null;
 		PreparedStatement sentenceFriend = null;
@@ -156,14 +160,13 @@ public class DatabaseQuery {
 		result += "</Friends>";
 		return Response.status(Response.Status.OK).entity(result).build();
 	}
-	
+
 	public static Response getFindUser (Connection connection, String name) {
 		String result = "<?xml version=\"1.0\"?>\n<Users>\n";
 		PreparedStatement sentence = null;
 		String query = "SELECT * \n"
 				+ "FROM USER u\n"
 				+ "WHERE u.name = ? \n";
-
 		try {
 			sentence = connection.prepareStatement(query);
 			sentence.setString(1, name);
@@ -184,7 +187,7 @@ public class DatabaseQuery {
 		result += "</Users>";
 		return Response.status(Response.Status.OK).entity(result).build();
 	}
-	
+
 	public static Response postCreateUser (Connection connection, Integer idUser, String username, String name,
 			String lastname, String gender, String mail, String phone) {
 		Statement sentence = null;
@@ -206,7 +209,7 @@ public class DatabaseQuery {
 		}
 		return Response.status(Response.Status.CREATED).build();
 	}
-	
+
 	public static Response postDeleteUser (Connection connection, Integer idUser) {
 		Statement sentence = null;
 		String query = "DELETE FROM USER\n"
@@ -223,7 +226,7 @@ public class DatabaseQuery {
 		}
 		return Response.status(Response.Status.BAD_REQUEST).build();
 	}
-	
+
 	public static Response postAddPost (Connection connection, Integer idPost, String postBody, String creationDate, Integer user) {
 		Statement sentence = null;
 		String query = "INSERT INTO POST\n"
@@ -243,7 +246,7 @@ public class DatabaseQuery {
 		}
 		return Response.status(Response.Status.BAD_REQUEST).build();
 	}
-	
+
 	public static Response postDeletePost(Connection connection, Integer idPost) {
 		Statement sentence = null;
 		String query = "DELETE FROM POST\n"
@@ -260,7 +263,7 @@ public class DatabaseQuery {
 		}
 		return Response.status(Response.Status.BAD_REQUEST).build();
 	}
-	
+
 	public static Response postAddFriend(Connection connection, Integer idUser, Integer idUserFriend) {
 		Statement sentence1 = null;
 		Statement sentence2 = null;
@@ -296,7 +299,7 @@ public class DatabaseQuery {
 		}
 		return Response.status(Response.Status.BAD_REQUEST).build();
 	}
-	
+
 	public static Boolean postModifyUsername (Connection connection, Integer idUser, String username) {
 		String query = "UPDATE USER u\n"
 				+ "SET u.username = '" + username + "'\n"
@@ -427,7 +430,7 @@ public class DatabaseQuery {
 		}
 		return Response.status(Response.Status.OK).build();
 	}
-	
+
 	public static Response postDeleteFriend (Connection connection, Integer idUser, Integer idFriend) {
 		String query1 = "DELETE FROM ISFRIEND \n"
 				+ "WHERE user1 = " + idUser + "\n"
@@ -459,7 +462,7 @@ public class DatabaseQuery {
 		}
 		return Response.status(Response.Status.OK).build();
 	}
-	
+
 	public static Response getFriendPosts (Connection connection, Integer idUser, String postBody, 
 			Integer limit, Integer offset, String sdate, String edate){
 		Statement sentenceFriend = null;

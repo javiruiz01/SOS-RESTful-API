@@ -108,7 +108,7 @@ public class API {
 
 	@GET
 	@Path("/users/{name}")
-	@Produces(MediaType.TEXT_XML)
+	@Produces(MediaType.APPLICATION_XML)
 	public static Response findUser (@PathParam("name") String name) {
 		Response result;
 		getConnection();
@@ -154,8 +154,6 @@ public class API {
 	@POST
 	@Path("/users/{idUser}/delete")
 	public static Response deleteUser (JAXBUserModel user, @PathParam("idUser") Integer idUser) { 
-		// Este seguro que es un POST?
-		// Debería ser un DELETE
 		Response result = null;
 		getConnection();
 		try {		

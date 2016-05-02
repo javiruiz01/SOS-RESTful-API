@@ -18,59 +18,59 @@ public class JAXBUserModel {
 	public Integer getIdUser () {
 		return 	idUser;
 	}
+	
+	public void setIdUser(Integer idUser) {
+		this.idUser = idUser;
+	}
 
 	@XmlElement(name="username")
 	public String getUsername () {
 		return 	username;
+	}
+	
+	public void setUsername (String username){
+		this.username = username;
 	}
 
 	@XmlElement(name="name")
 	public String getName () {
 		return 	name;
 	}
+	
+	public void setName (String name) {
+		this.name = name;
+	}
 
 	@XmlElement(name="lastname")
 	public String getLastname () {
 		return 	lastname;
+	}
+	
+	public void setLastname (String lastname) {
+		this.lastname = lastname;
 	}
 
 	@XmlElement(name="gender")
 	public String getGender () {
 		return 	gender;
 	}
+	
+	public void setGender (String gender) {
+		this.gender = gender;
+	}
 
 	@XmlElement(name="mail")
 	public String getMail () {
 		return 	mail;
 	}
+	
+	public void setMail (String mail) {
+		this.mail = mail;
+	}
 
 	@XmlElement(name="phone")
 	public String getPhone () {
 		return 	phone;
-	}
-
-	public void setIdUser(Integer idUser) {
-		this.idUser = idUser;
-	}
-
-	public void setUsername (String username){
-		this.username = username;
-	}
-
-	public void setName (String name) {
-		this.name = name;
-	}
-
-	public void setLastname (String lastname) {
-		this.lastname = lastname;
-	}
-	
-	public void setGender (String gender) {
-		this.gender = gender;
-	}
-	
-	public void setMail (String mail) {
-		this.mail = mail;
 	}
 	
 	public void setPhone (String phone) {
