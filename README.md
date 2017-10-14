@@ -1,6 +1,6 @@
 # SOS-RESTful-API
 
-Authors: [Javier Ruiz Calle] (https://github.com/javiruiz01) and [Yerai Zamorano] (https://github.com/yerai).
+Authors: [Javier Ruiz Calle](https://github.com/javiruiz01) and [Yerai Zamorano](https://github.com/yerai).
 
 Assignment for the subject **Service Oriented Systems** (SOS) of the Technical University of Madrid.
 
